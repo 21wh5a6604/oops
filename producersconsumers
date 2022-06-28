@@ -1,0 +1,91 @@
+package nithya;
+import java.util.LinkedList;
+public class producerconsume {
+	public static void main(String [] args) throws InterruptedException {
+		final PC pc= new PC();
+		Thread t1 = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				try {
+					pc.Producer();
+				}
+				catch(InterruptedException e){
+					e.printStackTrace();
+			}
+		}
+	});
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					pc.consumer();
+				}
+				catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t1.start();
+		t2.start();
+		
+		
+		t1.join();
+		t2.join();
+	}	
+	
+
+	
+	
+	
+	
+	
+	
+	public static class PC{	
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		int capacity=2;
+		public void Producer() throws InterruptedException {
+			int value=0;
+			while(true) {
+				synchronized (this) {
+					while(list.size()==capacity) 
+						wait();
+					System.out.println("Producer produced-"+value);
+					list.add(value++);
+					notify();
+					Thread.sleep(1000);
+					
+		}	
+	}
+}
+	public void  consumer() throws InterruptedException{
+		while(true){
+			synchronized(this) {
+				while(list.size()==0)
+					wait();
+				int val = list.removeFirst();
+				System.out.println("Consumr consumed-"+val);
+				notify();
+				Thread.sleep(1000);
+			}
+		}
+	}
+}
+}
+
+
+op:
+
+
+Producer produced-0
+Producer produced-1
+Consumr consumed-0
+Consumr consumed-1
+Producer produced-2
+Producer produced-3
+Consumr consumed-2
+Consumr consumed-3
+Producer produced-4
+Producer produced-5
+Consumr consumed-4
+Consumr consumed-5
+Producer produced-6
